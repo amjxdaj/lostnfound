@@ -1,0 +1,85 @@
+body {
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  background: #f5f6fa;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+/* Page Header */
+.page-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.page-header h2 {
+  font-size: 2rem;
+  color: #222;
+}
+.page-header .subtitle {
+  color: #666;
+  font-size: 1rem;
+}
+
+/* Items Grid */
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+/* Item Card */
+.item-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.item-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+.item-card h3 {
+  margin: 0 0 10px;
+  font-size: 1.25rem;
+  color: #007bff;
+}
+.item-card .location {
+  font-size: 0.95rem;
+  color: #444;
+  margin-bottom: 6px;
+}
+.item-card .date {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 12px;
+}
+
+/* Button */
+.btn {
+  display: inline-block;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  background: #007bff;
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+.btn:hover {
+  background: #0056b3;
+}
+
+/* Empty State */
+.empty {
+  text-align: center;
+  color: #777;
+  font-size: 1rem;
+}
+
+
+/* lostlist css */
+

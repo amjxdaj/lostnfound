@@ -1,0 +1,132 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}{{ detail_title }}{% endblock %}
+
+{% block content %}
+<style>
+.detail-wrap{ max-width: 980px; margin: 2rem auto; }
+.item-hero{
+  display:grid; grid-template-columns: 320px 1fr; gap: 1.25rem;
+  background: rgba(255,255,255,.05);
+  border:1px solid rgba(0,178,255,.4);
+  border-radius: 14px; padding: 1.25rem;
+  box-shadow: 0 6px 15px rgba(0,178,255,.25);
+}
+.item-image-lg{
+  width:100%; aspect-ratio: 1 / 1; object-fit: cover;
+  border-radius: 12px; border:2px solid #00b2ff; cursor: zoom-in;
+}
+.meta-row{ display:flex; flex-wrap:wrap; gap:1rem; margin:.5rem 0 1rem; color:#fff; }
+.meta-row span{ white-space:nowrap; font-size:.95rem; }
+.item-title{
+  font-size:1.6rem; font-weight:800; margin:0 0 .25rem; letter-spacing:.04em; color:#00b2ff;
+}
+.item-desc{ color:#cfd8e3; line-height:1.6; margin:.25rem 0 1rem; }
+
+.actions{ display:flex; flex-wrap:wrap; gap:.6rem; }
+.cta-button{ padding:9px 16px; border-radius:8px; font-size:.9rem; font-weight:700; text-decoration:none; transition:.2s; }
+.cta-primary{ background:linear-gradient(to right,#ff6600,#00aaff); color:#fff; }
+.cta-secondary{ background:transparent; border:1px solid #ff6600; color:#ff6600; }
+.cta-button:hover{ opacity:.85; }
+
+.section{ margin-top: 2rem; }
+
+/* Lightbox */
+.lightbox{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.75); z-index:9999; }
+.lightbox.open{ display:flex; }
+.lightbox img{ max-width:92vw; max-height:92vh; border-radius:12px; border:1px solid rgba(0,178,255,.4); box-shadow:0 10px 30px rgba(0,178,255,.35); }
+.lightbox .close{ position:absolute; top:18px; right:22px; font-size:28px; color:#fff; background:none; border:0; cursor:pointer; }
+
+@media (max-width: 800px){
+  .item-hero{ grid-template-columns: 1fr; }
+}
+</style>
+
+<section class="features">
+  <div class="detail-wrap">
+    <h2 class="section-title">{{ detail_title }}</h2>
+
+    <div class="item-hero">
+      <div>
+        {% if kind == "lost" %}
+          {% if item.image %}
+            <img src="{{ item.image.url }}" data-fullsrc="{{ item.image.url }}" alt="{{ item.title }}" class="item-image-lg js-zoom">
+          {% else %}
+            <img src="{% static 'default.png' %}" data-fullsrc="{% static 'default.png' %}" alt="No Image" class="item-image-lg js-zoom">
+          {% endif %}
+        {% else %}
+          {% if item.image %}
+            <img src="{{ item.image.url }}" data-fullsrc="{{ item.image.url }}" alt="{{ item.title }}" class="item-image-lg js-zoom">
+          {% else %}
+            <img src="{% static 'default.png' %}" data-fullsrc="{% static 'default.png' %}" alt="No Image" class="item-image-lg js-zoom">
+          {% endif %}
+        {% endif %}
+      </div>
+
+      <div>
+        <h3 class="item-title">{{ item.title }}</h3>
+
+        <div class="meta-row">
+          {% if kind == "lost" %}
+            <span><strong>Date Lost:</strong> {{ item.date_lost|date:"M d, Y" }}</span>
+            {% if item.reward %}<span><strong>Reward:</strong> {{ item.reward }}</span>{% endif %}
+          {% else %}
+            <span><strong>Date Found:</strong> {{ item.date_found|date:"M d, Y" }}</span>
+          {% endif %}
+          <span><strong>Location:</strong> {{ item.location }}</span>
+          <span><strong>Posted by:</strong> {{ item.user.username }}</span>
+          <span><strong>Posted on:</strong> {{ item.created_at|date:"M d, Y H:i" }}</span>
+        </div>
+
+        <p class="item-desc">{{ item.description }}</p>
+
+        <div class="actions">
+          <!-- Opposite report action -->
+          <a href="{% url report_url %}?item={{ item.id }}" class="cta-button cta-primary">{{ opposite_label }}</a>
+
+          <!-- Contact -->
+          {% if phone %}
+            <a href="https://wa.me/{{ wa_phone }}?text=Hi%20I%20saw%20your%20{{ kind }}%20item%20listing%20for%20{{ item.title|urlencode }}"
+               target="_blank" rel="noopener" class="cta-button cta-secondary">WhatsApp</a>
+            <a href="tel:{{ phone }}" class="cta-button cta-secondary">Call</a>
+          {% endif %}
+
+          <!-- Chat (wire later to your chat system) -->
+          <a href="{% if kind == 'lost' %}/chat/lost-{{ item.id }}/{% else %}/chat/found-{{ item.id }}/{% endif %}"
+             class="cta-button cta-secondary">Chat</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <!-- Placeholder for “More items by {{ item.user.username }}” or related items -->
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="close" aria-label="Close">&times;</button>
+  <img src="" alt="">
+</div>
+
+<script>
+(function(){
+  // Image zoom (lightbox)
+  const lb = document.getElementById('lightbox');
+  const lbImg = lb.querySelector('img');
+  const close = () => lb.classList.remove('open');
+
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('.js-zoom');
+    if (t) {
+      lbImg.src = t.dataset.fullsrc || t.src;
+      lbImg.alt = t.alt || '';
+      lb.classList.add('open');
+    }
+    if (e.target === lb || e.target === lb.querySelector('.close')) close();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+})();
+</script>
+{% endblock %}

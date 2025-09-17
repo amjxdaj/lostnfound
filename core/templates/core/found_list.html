@@ -1,0 +1,179 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Found Items{% endblock %}
+
+{% block content %}
+<style>
+/* Title + Button row */
+.section-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:1rem;
+}
+.section-title{ margin:0; line-height:1; letter-spacing:.06em; }
+.section-action{ margin:0; }
+
+/* Container */
+.items-container{
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+  margin-top:1.5rem;
+}
+
+/* Card */
+.item-card{
+  display:flex;
+  flex-direction:column;
+  gap:.75rem;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(0,178,255,.4);
+  border-radius:12px;
+  padding:1rem 1.5rem;
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.item-card:hover{ transform:translateY(-3px); box-shadow:0 6px 15px rgba(0,178,255,.4); }
+
+/* Row: left info + right actions */
+.item-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:1rem;
+}
+
+/* Left: image + info */
+.item-left{ display:flex; align-items:center; gap:1rem; }
+.item-image{
+  width:55px; height:55px; border-radius:50%;
+  object-fit:cover; border:2px solid #00b2ff;
+}
+.item-info{ display:flex; gap:1.2rem; font-size:.9rem; color:#fff; }
+.item-info span{ white-space:nowrap; }
+
+/* Right: actions */
+.item-right{ display:flex; gap:.6rem; }
+
+/* Buttons */
+.cta-button{ padding:7px 14px; border-radius:6px; font-size:.85rem; font-weight:bold; text-decoration:none; transition:.2s; }
+.cta-primary{ background:linear-gradient(to right, #ff6600, #00aaff); color:#fff; }
+.cta-secondary{ background:transparent; border:1px solid #ff6600; color:#ff6600; }
+.cta-button:hover{ opacity:.8; }
+
+/* Expanded view */
+.expanded{ display:none; color:#ccc; font-size:.85rem; }
+.item-card.active .expanded{ display:block; }
+
+/* Empty */
+.no-items{ color:#ccc; font-style:italic; margin-top:2rem; text-align:center; }
+
+/* Mobile tweaks */
+@media (max-width: 640px){
+  .section-header{ flex-direction:column; align-items:flex-start; gap:.75rem; }
+  .item-row{ flex-direction:column; align-items:flex-start; gap:.75rem; }
+  .item-right{ flex-wrap:wrap; }
+  .section-action{ width:100%; text-align:center; }
+}
+
+/* Lightbox */
+.lightbox {
+  position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+  background: rgba(0,0,0,.75); z-index: 9999;
+}
+.lightbox.open { display: flex; }
+.lightbox img {
+  max-width: 92vw; max-height: 92vh; border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,178,255,.35); border: 1px solid rgba(0,178,255,.4);
+}
+.lightbox .close {
+  position: absolute; top: 18px; right: 22px; font-size: 28px; color: #fff; cursor: pointer;
+  background: transparent; border: 0;
+}
+</style>
+
+<section class="features">
+  <div class="section-header">
+    <h2 class="section-title">FOUND ITEMS</h2>
+    <a href="{% url 'report_found' %}" class="cta-button cta-primary section-action">Report Found</a>
+  </div>
+
+  <div class="items-container">
+    {% for item in items %}
+      <div class="item-card">
+        <!-- Top row -->
+        <div class="item-row">
+          <!-- Left -->
+          <div class="item-left">
+            {% if item.image %}
+              <img src="{{ item.image.url }}" data-fullsrc="{{ item.image.url }}"
+                   alt="{{ item.title }}" class="item-image js-lightbox-trigger">
+            {% else %}
+              <img src="{% static 'default.png' %}" data-fullsrc="{% static 'default.png' %}"
+                   alt="No Image" class="item-image js-lightbox-trigger">
+            {% endif %}
+
+            <div class="item-info">
+              <span><strong>Title:</strong> {{ item.title }}</span>
+              <span><strong>Location:</strong> {{ item.location }}</span>
+              <span><strong>Date:</strong> {{ item.date_found|date:"M d, Y" }}</span>
+              <span><strong>Reward:</strong> {{ item.reward|default:"None" }}</span>
+              <span><strong>User:</strong> {{ item.user }}</span>
+            </div>
+          </div>
+
+          <!-- Right -->
+          <div class="item-right">
+            <a href="{% url 'report_lost' %}?found={{ item.id }}" class="cta-button cta-primary">I Lost This</a>
+            <a href="https://wa.me/{{ item.phone|urlencode }}" target="_blank" class="cta-button cta-secondary">WhatsApp</a>
+            <a href="tel:{{ item.phone|urlencode }}" class="cta-button cta-secondary">Call</a>
+          </div>
+        </div>
+
+        <!-- Expanded details -->
+        <div class="expanded">
+          <p><strong>Description:</strong> {{ item.description }}</p>
+        </div>
+      </div>
+    {% empty %}
+      <p class="no-items">No found items reported.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button class="close" aria-label="Close">&times;</button>
+    <img src="" alt="">
+  </div>
+</section>
+
+<script>
+  // Toggle expand
+  document.querySelectorAll(".item-card").forEach(card=>{
+    card.addEventListener("click", e=>{
+      if(e.target.closest('.cta-button')) return;
+      card.classList.toggle("active");
+    });
+  });
+
+  // Lightbox
+  (function(){
+    const lb = document.getElementById('lightbox');
+    const lbImg = lb.querySelector('img');
+    const close = () => lb.classList.remove('open');
+
+    document.addEventListener('click', (e) => {
+      const t = e.target.closest('.js-lightbox-trigger');
+      if (t) {
+        lbImg.src = t.dataset.fullsrc || t.src;
+        lbImg.alt = t.alt || '';
+        lb.classList.add('open');
+      }
+      if (e.target === lb || e.target === lb.querySelector('.close')) close();
+    });
+
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  })();
+</script>
+{% endblock %}

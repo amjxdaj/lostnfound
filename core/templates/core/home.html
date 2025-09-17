@@ -1,0 +1,282 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost & Found</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="/static/templatemo-electric-xtra.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Animated Grid Background -->
+    <div class="grid-bg"></div>
+    <div class="gradient-overlay"></div>
+    <div class="scanlines"></div>
+
+    <!-- Animated Shapes -->
+    <div class="shapes-container">
+        <div class="shape shape-circle"></div>
+        <div class="shape shape-triangle"></div>
+        <div class="shape shape-square"></div>
+    </div>
+
+    <!-- Floating Particles -->
+    <div id="particles"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="logo-link">
+                <svg class="logo-svg" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#FF5E00;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#00B2FF;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <polygon points="20,2 38,14 38,26 20,38 2,26 2,14" fill="none" stroke="url(#logoGradient)" stroke-width="2"/>
+                    <polygon points="20,8 32,16 32,24 20,32 8,24 8,16" fill="url(#logoGradient)" opacity="0.3"/>
+                    <circle cx="20" cy="20" r="3" fill="url(#logoGradient)"/>
+                </svg>
+                <span class="logo-text">Lost & Found</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}" class="nav-link">Home</a></li>
+                <li><a href="{% url 'lost_list' %}" class="nav-link">Lost</a></li>
+                <li><a href="{% url 'found_list' %}" class="nav-link">Found</a></li>
+                <li><a href="{% url 'notifications' %}" class="nav-link">Notifications</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'profile' %}" class="nav-link">Profile</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+                {% endif %}
+            </ul>
+            
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="text-rotator">
+                <div class="text-set active">
+                    <h1 class="glitch-text" data-text="Report Lost & Found">Report Lost & Found</h1>
+                    <p class="subtitle">Easily report lost or found items and connect with others.</p>
+                </div>
+
+                <div class="text-set">
+                    <h1 class="glitch-text" data-text="Lost an Item?">Lost an Item?</h1>
+                    <p class="subtitle">Search here to see if someone has found it.</p>
+                </div>
+
+                <div class="text-set">
+                    <h1 class="glitch-text" data-text="Found an Item?">Found an Item?</h1>
+                    <p class="subtitle">Report it and help the rightful owner. You may even receive a reward.</p>
+                </div>
+            </div>
+        </div>
+        <div class="cta-container">
+            <a href="{% url 'login' %}" class="cta-button cta-primary">Get Started</a>
+            <a href="#about" class="cta-button cta-secondary">Learn More</a>
+        </div>
+    </section>
+
+    <!-- Features Section with Tabs -->
+    <section class="features" id="features">
+        <h2 class="section-title">Core Features</h2>
+        <div class="features-container">
+            <div class="feature-tabs">
+                <div class="tab-item active" data-tab="reporting">
+                    <span class="tab-icon">📢</span>
+                    <span>Quick Reporting</span>
+                </div>
+                <div class="tab-item" data-tab="security">
+                    <span class="tab-icon">🔒</span>
+                    <span>Safe & Secure</span>
+                </div>
+                <div class="tab-item" data-tab="connection">
+                    <span class="tab-icon">🤝</span>
+                    <span>Connect Easily</span>
+                </div>
+                <div class="tab-item" data-tab="notifications">
+                    <span class="tab-icon">🔔</span>
+                    <span>Instant Alerts</span>
+                </div>
+                <div class="tab-item" data-tab="community">
+                    <span class="tab-icon">🌍</span>
+                    <span>Community Driven</span>
+                </div>
+            </div>
+            <div class="feature-content">
+                <div class="content-panel active" id="reporting">
+                    <h3>Quick & Easy Reporting</h3>
+                    <p>Report a lost or found item in just a few clicks. Upload details, images, and contact info to make the process smooth.</p>
+                    <ul class="feature-list">
+                        <li>Simple reporting form</li>
+                        <li>Upload item photos</li>
+                        <li>Track your reports</li>
+                    </ul>
+                </div>
+                <div class="content-panel" id="security">
+                    <h3>Safe & Secure</h3>
+                    <p>Your privacy matters. All communication is secure, and phone numbers are safely linked for calls/WhatsApp only.</p>
+                    <ul class="feature-list">
+                        <li>Secure phone linking</li>
+                        <li>No sensitive data stored</li>
+                        <li>Verified user accounts</li>
+                    </ul>
+                </div>
+                <div class="content-panel" id="connection">
+                    <h3>Connect with Finders/Owners</h3>
+                    <p>Directly reach out to the person who reported the item. Choose WhatsApp or Call for quick communication.</p>
+                    <ul class="feature-list">
+                        <li>WhatsApp integration</li>
+                        <li>Direct call option</li>
+                        <li>Quick responses</li>
+                    </ul>
+                </div>
+                <div class="content-panel" id="notifications">
+                    <h3>Instant Notifications</h3>
+                    <p>Get notified when a matching lost or found item is reported near you.</p>
+                    <ul class="feature-list">
+                        <li>Real-time updates</li>
+                        <li>Personalized alerts</li>
+                        <li>Email & app notifications</li>
+                    </ul>
+                </div>
+                <div class="content-panel" id="community">
+                    <h3>Community Driven</h3>
+                    <p>Our platform thrives on the community. Help others, and they’ll help you when you need it.</p>
+                    <ul class="feature-list">
+                        <li>Build trust locally</li>
+                        <li>Rewarding good deeds</li>
+                        <li>Stronger connections</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <h2 class="section-title">About Lost & Found</h2>
+        <div class="about-content">
+            <div class="about-text">
+                <h2>Making Lost Items Easier to Find</h2>
+                <p>Lost & Found is a community-driven platform built to help people quickly report and recover lost items. Our mission is simple: to connect finders and owners efficiently and securely.</p>
+                <p>Every day, countless items go missing. With Lost & Found, we bring technology and people together to solve this everyday problem.</p>
+            </div>
+            <div class="about-visual">
+                <div class="about-graphic"></div>
+            </div>
+        </div>
+        
+        <!-- Second row with reversed layout -->
+        <div class="about-content" style="margin-top: 80px;">
+            <div class="about-visual">
+                <div class="about-graphic-alt">
+                    <div class="hexagon"></div>
+                    <div class="hexagon"></div>
+                    <div class="hexagon"></div>
+                </div>
+            </div>
+            <div class="about-text">
+                <h2>Our Vision</h2>
+                <p>We believe no item should stay lost forever. By combining simple reporting tools, real-time alerts, and a supportive community, we aim to make recovering lost items faster and easier than ever.</p>
+                <p>Whether it’s a phone, wallet, or even a pet, Lost & Found is here to bring peace of mind to both finders and seekers.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <h2 class="section-title">Get In Touch</h2>
+        <div class="contact-container">
+            <div class="contact-form">
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" name="subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+            </div>
+            <div class="contact-info">
+                <h3>Connect With Us</h3>
+                <div class="info-item">
+                    <div class="info-icon">📧</div>
+                    <div class="info-details">
+                        <h4>Email</h4>
+                        <p>amjad4haca@gmail.com</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">📱</div>
+                    <div class="info-details">
+                        <h4>Phone</h4>
+                        <p>+91 9061540651</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">📍</div>
+                    <div class="info-details">
+                        <h4>Location</h4>
+                        <p>Malappuram, Kerala, India</p>
+                    </div>
+                </div>
+                <div class="map-container">
+                    <div class="map-placeholder">
+                        <p>Map Placeholder</p>
+                        <p style="font-size: 0.9rem; margin-top: 10px;">Malappuram, Kerala</p>
+                    </div>
+                    <div class="map-overlay"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#privacy">Privacy Policy</a>
+                <a href="#terms">Terms of Service</a>
+                <a href="#careers">Careers</a>
+            </div>
+            <p class="copyright">© 2025 Lost & Found. All rights reserved.</p>
+        </div>
+    </footer>
+
+<script src="/static/templatemo-electric-scripts.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const menuToggle = document.getElementById("menuToggle");
+  const navLinks = document.querySelector(".nav-links");
+
+  menuToggle.addEventListener("click", () => {
+    menuToggle.classList.toggle("active");
+    navLinks.classList.toggle("active");
+  });
+});
+</script>
+
+</body>
+</html>

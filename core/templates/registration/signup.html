@@ -1,0 +1,96 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<style>
+/* Container */
+.signup-form-container {
+  max-width: 500px;
+  margin: 2rem auto;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(0,178,255,0.4);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 6px 15px rgba(0,178,255,0.3);
+}
+
+/* Title */
+.signup-title {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: #00b2ff;
+  text-align: center;
+  letter-spacing: .06em;
+}
+
+/* Form */
+.signup-form label {
+  display: block;
+  margin-bottom: .4rem;
+  font-weight: 500;
+  color: #fff;
+}
+.signup-form input {
+  width: 100%;
+  padding: .6rem .8rem;
+  margin-bottom: 1.2rem;
+  border: 1px solid rgba(0,178,255,0.5);
+  border-radius: 6px;
+  background: rgba(0,0,0,0.4);
+  color: #fff;
+  font-size: .95rem;
+}
+.signup-form input:focus {
+  outline: none;
+  border-color: #ff6600;
+  box-shadow: 0 0 6px rgba(255,102,0,.6);
+}
+
+/* Button */
+.submit-btn {
+  display: inline-block;
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  background: linear-gradient(to right, #ff6600, #00aaff);
+  color: #fff;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.submit-btn:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
+}
+
+/* Login link */
+.login-link {
+  display: block;
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #ff6600;
+  text-decoration: none;
+  font-weight: 500;
+}
+.login-link:hover {
+  text-decoration: underline;
+}
+</style>
+
+<section class="features">
+  <div class="signup-form-container">
+    <h2 class="signup-title">Sign Up</h2>
+    <form method="post" class="signup-form">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="submit-btn">Sign Up</button>
+    </form>
+    <a href="{% url 'login' %}" class="login-link">Already have an account? Login</a>
+  </div>
+</section>
+{% endblock %}
