@@ -97,15 +97,27 @@ WSGI_APPLICATION = "lostfound.wsgi.application"
 # Database
 # -----------------------------------------------------------------------------
 # Local default (your MySQL) — used if DATABASE_URL is not set
-LOCAL_MYSQL_URL = "mysql://root:amjad@2004@localhost:3306/lostfound_db"
-
-DATABASES = {
-    "default": dj_database_url.config(
-        default=os.environ.get("DATABASE_URL", LOCAL_MYSQL_URL),
-        conn_max_age=600,
-    )
+# Local dev default (your MySQL)
+LOCAL_MYSQL = {
+    'ENGINE': 'django.db.backends.mysql',
+    'NAME': 'lostfound_db',
+    'USER': 'root',
+    'PASSWORD': 'amjad@2004',
+    'HOST': 'localhost',
+    'PORT': 3306,
 }
 
+DATABASES = {}
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
+    # Production: use DATABASE_URL (Postgres or MySQL from Railway)
+    DATABASES['default'] = dj_database_url.parse(
+        DATABASE_URL, conn_max_age=600, ssl_require=True
+    )
+else:
+    # Local dev: use MySQL
+    DATABASES['default'] = LOCAL_MYSQL
 # -----------------------------------------------------------------------------
 # Password validation
 # -----------------------------------------------------------------------------
