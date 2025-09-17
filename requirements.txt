@@ -7,6 +7,7 @@ Django==5.2.6
 django-cloudinary-storage==0.3.0
 gunicorn==23.0.0
 idna==3.10
+psycopg[binary]==3.2.3
 mysqlclient==2.2.7
 packaging==25.0
 pillow==11.3.0
@@ -17,4 +18,4 @@ sqlparse==0.5.3
 tzdata==2025.2
 urllib3==2.5.0
 whitenoise==6.10.0
-psycopg2-binary==2.9.9
+
