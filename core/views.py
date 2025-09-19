@@ -181,15 +181,11 @@ def create_lost_item(request):
 
 User = get_user_model()
 
-# only superusers
-def _is_superuser(u): 
-    return u.is_active and u.is_superuser
-
 @login_required
-@user_passes_test(_is_superuser)  # redirects to LOGIN_URL if not allowed
+@user_passes_test(lambda u: u.is_superuser)
 def admin_dashboard(request):
-    users = User.objects.all().order_by('-date_joined')
-    return render(request, 'core/admin_dashboard.html', {'users': users})
+    users = User.objects.all()
+    return render(request, "core/admin_dashboard.html", {"users": users})
 
 def home(request):
     return render(request, 'core/home.html')

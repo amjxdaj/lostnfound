@@ -1,37 +1,26 @@
 {% extends "core/base.html" %}
-{% block title %}Admin Dashboard{% endblock %}
-
 {% block content %}
-<h2>Admin Dashboard — Users</h2>
-
-<div style="overflow:auto">
-  <table class="table">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Username</th>
-        <th>Email</th>
-        <th>Joined</th>
-        <th>Last login</th>
-        <th>Staff</th>
-        <th>Superuser</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for u in users %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ u.username }}</td>
-        <td>{{ u.email|default:"—" }}</td>
-        <td>{{ u.date_joined|date:"Y-m-d H:i" }}</td>
-        <td>{{ u.last_login|date:"Y-m-d H:i"|default:"—" }}</td>
-        <td>{{ u.is_staff|yesno:"Yes,No" }}</td>
-        <td>{{ u.is_superuser|yesno:"Yes,No" }}</td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="7">No users yet.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="dashboard">
+    <h1>Admin Dashboard</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Superuser</th>
+                <th>Date Joined</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in users %}
+            <tr>
+                <td>{{ u.username }}</td>
+                <td>{{ u.email }}</td>
+                <td>{{ u.is_superuser }}</td>
+                <td>{{ u.date_joined|date:"Y-m-d H:i" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}

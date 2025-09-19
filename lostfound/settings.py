@@ -8,8 +8,13 @@ import dj_database_url
 # -----------------------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load .env locally (Railway injects env vars automatically)
+# Load .env first (prod/defaults)
 load_dotenv()
+
+# If a .env.local exists, it wins for local dev
+local_env = BASE_DIR / ".env.local"
+if local_env.exists():
+    load_dotenv(local_env, override=True)
 
 # -----------------------------------------------------------------------------
 # Security & Debug
@@ -17,23 +22,36 @@ load_dotenv()
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-not-secure")
 DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
 
-# Comma-separated list -> list
+# Detect Render environment
+ON_RENDER = (
+    bool(os.getenv("RENDER"))
+    or bool(os.getenv("RENDER_EXTERNAL_HOSTNAME"))
+    or os.getenv("RUN_ENV") == "render"
+)
+
+# Tell Django it’s behind a proxy that passes HTTPS info
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+if ON_RENDER:
+    # Production hardening
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+else:
+    # Local dev: don’t force HTTPS
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+
+# Helper: comma-separated env vars -> Python list
 def _csv_env(name, default=""):
     val = os.environ.get(name, default)
     return [x.strip() for x in val.split(",") if x.strip()]
 
 ALLOWED_HOSTS = _csv_env("ALLOWED_HOSTS", "127.0.0.1,localhost")
-
-# For HTTPS behind Railway proxy
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-if not DEBUG:
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-
 CSRF_TRUSTED_ORIGINS = _csv_env(
     "CSRF_TRUSTED_ORIGINS",
-    "http://127.0.0.1,http://localhost"
+    "http://127.0.0.1,http://localhost",
 )
 
 # Public site URL used in emails/links
@@ -96,7 +114,7 @@ WSGI_APPLICATION = "lostfound.wsgi.application"
 # -----------------------------------------------------------------------------
 # Database
 # -----------------------------------------------------------------------------
-# Local default (your MySQL for dev)
+# Local default (MySQL for dev)
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -108,10 +126,10 @@ DATABASES = {
     }
 }
 
-# If DATABASE_URL is provided (Render Postgres), override:
-db_from_env = dj_database_url.config(conn_max_age=600, ssl_require=not DEBUG)
-if db_from_env:
-    DATABASES["default"] = db_from_env
+# If DATABASE_URL is provided (Render Postgres), override ONLY in prod
+if ON_RENDER and os.getenv("DATABASE_URL"):
+    DATABASES["default"] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+# else: keep local MySQL
 
 # -----------------------------------------------------------------------------
 # Password validation
@@ -143,7 +161,6 @@ if (BASE_DIR / "static").exists():
 # Whitenoise: hashed/compressed static files
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# Media: use Cloudinary in all environments where CLOUDINARY_URL is set
 # Media
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"  # used locally

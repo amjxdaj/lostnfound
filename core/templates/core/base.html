@@ -55,20 +55,18 @@
                 <span class="logo-text">Lost & Found</span>
             </a>
             <ul class="nav-links">
-                <li><a href="{% url 'home' %}" class="nav-link">Home</a></li>
-                <li><a href="{% url 'lost_list' %}" class="nav-link">Lost</a></li>
-                <li><a href="{% url 'found_list' %}" class="nav-link">Found</a></li>
-                <li><a href="{% url 'notifications' %}" class="nav-link">Notifications</a></li>
-                {% if user.is_authenticated %}
-                    <li><a href="{% url 'profile' %}" class="nav-link">Profile</a></li>
-                {% else %}
-                    <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
-                {% endif %}
-                {% if request.user.is_authenticated and request.user.is_superuser %}
-                <li><a href="{% url 'admin:index' %}">Django Admin</a></li>
-                <li><a href="{% url 'admin_dashboard' %}">Admin Dashboard</a></li>
-                {% endif %}
-            </ul>
+    <li><a href="{% url 'home' %}" class="nav-link">Home</a></li>
+    <li><a href="{% url 'lost_list' %}" class="nav-link">Lost</a></li>
+    <li><a href="{% url 'found_list' %}" class="nav-link">Found</a></li>
+    <li><a href="{% url 'notifications' %}" class="nav-link">Notifications</a></li>
+    
+    {% if user.is_authenticated %}
+        <li><a href="{% url 'profile' %}" class="nav-link">Profile</a></li>
+    {% else %}
+        <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+    {% endif %}
+</ul>
+
         </div>
     </nav>
 

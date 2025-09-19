@@ -72,28 +72,33 @@
 <section class="features">
 
   <div class="section-header">
-  <h2 class="section-title">MY PROFILE</h2>
-  <div style="display:flex; align-items:center; gap:1rem;">
-    <p class="section-sub">Signed in as <strong>{{ request.user.username }}</strong></p>
+    <h2 class="section-title">MY PROFILE</h2>
+    <div style="display:flex; align-items:center; gap:1rem;">
+      <p class="section-sub">Signed in as <strong>{{ request.user.username }}</strong></p>
 
-    <!-- Logout form -->
-    <form method="post" action="{% url 'logout' %}" class="delete-form">
-      {% csrf_token %}
-      <button type="submit" class="cta-button cta-primary"
-              onclick="return confirm('Do you really want to log out?');">
-        Logout
-      </button>
-    </form>
+      <!-- Logout form -->
+      <form method="post" action="{% url 'logout' %}" class="delete-form">
+        {% csrf_token %}
+        <button type="submit" class="cta-button cta-primary"
+                onclick="return confirm('Do you really want to log out?');">
+          Logout
+        </button>
+      </form>
+    </div>
   </div>
-</div>
 
-  {% if messages %}
-    <ul class="messages">
-      {% for message in messages %}
-        <li class="{{ message.tags }}">{{ message }}</li>
-      {% endfor %}
-    </ul>
+  <!-- Extra Buttons Row -->
+  {% if request.user.is_superuser %}
+  <div style="display:flex; justify-content:center; gap:1.5rem; margin:1.5rem 0;">
+    <a href="{% url 'admin_dashboard' %}" class="cta-button cta-primary">
+      Admin Dashboard
+    </a>
+    <a href="{% url 'admin:index' %}" target="_blank" class="cta-button cta-secondary">
+      Django Admin
+    </a>
+  </div>
   {% endif %}
+
 
   <!-- LOST ITEMS -->
   <div class="section-header" style="margin-top:1.75rem;">
