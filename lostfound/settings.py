@@ -96,7 +96,7 @@ WSGI_APPLICATION = "lostfound.wsgi.application"
 # -----------------------------------------------------------------------------
 # Database
 # -----------------------------------------------------------------------------
-# Default: local MySQL (for development)
+# Local default (your MySQL for dev)
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -108,12 +108,10 @@ DATABASES = {
     }
 }
 
-# Override with DATABASE_URL if provided (e.g. Railway Postgres)
-DATABASES["default"] = dj_database_url.config(
-    default=os.getenv("DATABASE_URL"),  # Railway sets DATABASE_URL automatically
-    conn_max_age=600,
-    ssl_require=True
-) or DATABASES["default"]
+# If DATABASE_URL is provided (Render Postgres), override:
+db_from_env = dj_database_url.config(conn_max_age=600, ssl_require=not DEBUG)
+if db_from_env:
+    DATABASES["default"] = db_from_env
 
 # -----------------------------------------------------------------------------
 # Password validation
@@ -146,9 +144,13 @@ if (BASE_DIR / "static").exists():
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Media: use Cloudinary in all environments where CLOUDINARY_URL is set
+# Media
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"   # used only if Cloudinary is not configured
-DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+MEDIA_ROOT = BASE_DIR / "media"  # used locally
+
+# Use Cloudinary only when CLOUDINARY_URL is present
+if os.getenv("CLOUDINARY_URL"):
+    DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 # -----------------------------------------------------------------------------
 # Email
