@@ -64,6 +64,10 @@
                 {% else %}
                     <li><a href="{% url 'login' %}" class="nav-link">Login</a></li>
                 {% endif %}
+                {% if request.user.is_authenticated and request.user.is_superuser %}
+                <li><a href="{% url 'admin:index' %}">Django Admin</a></li>
+                <li><a href="{% url 'admin_dashboard' %}">Admin Dashboard</a></li>
+                {% endif %}
             </ul>
         </div>
     </nav>

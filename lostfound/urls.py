@@ -25,6 +25,7 @@ urlpatterns = [
     path('',  include('core.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', views.home),    
+    path('super/dashboard/', views.admin_dashboard, name='admin_dashboard'),
 ]
 
 if settings.DEBUG:

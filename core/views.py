@@ -3,10 +3,11 @@ from .utils import find_matches, create_notification, send_notification_email
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from .forms import LostItemForm, FoundItemForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.http import require_POST
 from .models import Notification, LostItem, FoundItem
 import re
+from django.contrib.auth import get_user_model
 
 @login_required
 def report_lost(request):
@@ -177,6 +178,18 @@ def found_detail(request, item_id):
 @login_required
 def create_lost_item(request):
     pass
+
+User = get_user_model()
+
+# only superusers
+def _is_superuser(u): 
+    return u.is_active and u.is_superuser
+
+@login_required
+@user_passes_test(_is_superuser)  # redirects to LOGIN_URL if not allowed
+def admin_dashboard(request):
+    users = User.objects.all().order_by('-date_joined')
+    return render(request, 'core/admin_dashboard.html', {'users': users})
 
 def home(request):
     return render(request, 'core/home.html')
