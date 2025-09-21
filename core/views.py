@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from .utils import find_matches, create_notification, send_notification_email
 from django.contrib import messages
@@ -8,6 +9,7 @@ from django.views.decorators.http import require_POST
 from .models import Notification, LostItem, FoundItem
 import re
 from django.contrib.auth import get_user_model
+
 
 @login_required
 def report_lost(request):
@@ -35,35 +37,46 @@ def report_found(request):
             matches = find_matches(found_item)
             if matches:
                 for lost in matches:
-                    # In-app notification
+                    # In-app notifications
                     create_notification(
                         user=request.user,
                         message=f"Your found item matches Lost Item: {lost.title} (Reward: {lost.reward})",
-                        link=f"/lost/{lost.id}/"
+                        link=f"/lost/{lost.id}/",
                     )
                     create_notification(
                         user=lost.user,
                         message=f"Someone reported a found item that matches your lost {lost.title}.",
-                        link=f"/found/{found_item.id}/"
+                        link=f"/found/{found_item.id}/",
                     )
+
+                    # Absolute URLs for emails (use the current host)
+                    lost_url  = request.build_absolute_uri(reverse("lost_detail",  args=[lost.id]))
+                    found_url = request.build_absolute_uri(reverse("found_detail", args=[found_item.id]))
 
                     # Email to finder
                     send_notification_email(
                         request.user.email,
                         "Match Found for Your Found Item",
-                        f"Your found item may match with '{lost.title}'(Reward: {lost.reward}). Check details here: http://127.0.0.1:8000/lost/{lost.id}/"
+                        (
+                            f"Your found item may match with '{lost.title}' "
+                            f"(Reward: {lost.reward}). Check details here: {lost_url}"
+                        ),
                     )
 
-                    # Email to loser
+                    # Email to the person who lost the item
                     send_notification_email(
                         lost.user.email,
                         "Match Found for Your Lost Item",
-                        f"Someone reported a found item that may match your lost '{lost.title}'. Check details here: http://127.0.0.1:8000/found/{found_item.id}/"
+                        (
+                            f"Someone reported a found item that may match your lost '{lost.title}'. "
+                            f"Check details here: {found_url}"
+                        ),
                     )
 
             return redirect('found_list')
     else:
         form = FoundItemForm()
+
     return render(request, 'core/report_found.html', {'form': form})
 
 
