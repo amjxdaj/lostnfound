@@ -191,5 +191,5 @@ LOGOUT_REDIRECT_URL = "/home/"
 # Default PK
 # -----------------------------------------------------------------------------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-print("CLOUDINARY_URL:", os.getenv("CLOUDINARY_URL"))
-print("DEFAULT_FILE_STORAGE:", globals().get("DEFAULT_FILE_STORAGE"))
+    # print("CLOUDINARY_URL:", os.getenv("CLOUDINARY_URL"))
+    # print("DEFAULT_FILE_STORAGE:", globals().get("DEFAULT_FILE_STORAGE"))

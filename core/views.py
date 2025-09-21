@@ -2,7 +2,7 @@ from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from .utils import find_matches, create_notification, send_notification_email
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
+from .forms import CustomUserCreationForm
 from .forms import LostItemForm, FoundItemForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.http import require_POST
@@ -123,13 +123,14 @@ def mark_read(request, note_id):
 
 def signup(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('/accounts/login/')
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
+
 
 @login_required
 def profile(request):
